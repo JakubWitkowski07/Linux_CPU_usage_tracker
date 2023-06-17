@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -20,3 +21,5 @@ struct cpuStats
     uint32_t guest;
     uint32_t guest_nice;    
 };
+
+int get_core_num();
