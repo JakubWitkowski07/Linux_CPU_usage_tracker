@@ -7,9 +7,9 @@
 
 int coreNum = 0;
 
+
 int get_core_num()
 {
     coreNum = get_nprocs();
-    double cpuUsage[coreNum + 1];
     return coreNum;
 }

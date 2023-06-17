@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <stdint.h>
 
+unsigned sleep(unsigned sec);
+
 extern int coreNum;
 
 extern double cpuUsage[];
