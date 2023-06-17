@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GLOBAL_H
+#define GLOBAL_H
 #include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -25,3 +26,4 @@ struct cpuStats
 };
 
 int get_core_num();
+#endif /*GLOBAL_H*/
