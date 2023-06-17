@@ -5,6 +5,7 @@
 #include "global.h"
 #include "reader.h"
 #include "analyzer.h"
+#include "printer.h"
 
 int main(void)
 {
@@ -12,14 +13,20 @@ int main(void)
 
     struct cpuStats statsPrev[coreNum + 1];
     struct cpuStats statsCur[coreNum + 1];
-
-    get_proc_stats(&statsPrev);
-    sleep(1);
-    get_proc_stats(&statsCur);
-
     double cpuUsage[coreNum + 1];
 
-    calculate_usage(&statsPrev, &statsCur, cpuUsage);
+    while(1)
+    {
+        get_proc_stats(&statsPrev);
+
+        sleep(1);
+
+        get_proc_stats(&statsCur);
+
+        calculate_usage(&statsPrev, &statsCur, cpuUsage);
+
+        print_usage(cpuUsage);
+    }
     
     return 0;
 }
