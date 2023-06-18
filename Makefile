@@ -11,4 +11,4 @@ gcc:
 	$(CC2) $(C2FLAGS) main.c global.c reader.c analyzer.c printer.c -o gcccompilation
 
 clean:
-	rm -rf *.o final
+	rm -rf *.o gcccompilation clangcompilation
