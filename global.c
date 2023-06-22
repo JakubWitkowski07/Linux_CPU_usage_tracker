@@ -1,17 +1,23 @@
 #include "global.h"
+#include "global.h"
 #include <unistd.h>
 
 
 int coreNum;
 
 void get_core_num()
+int coreNum;
+
+void get_core_num()
 {
+    int bufferSize;
     int bufferSize;
     coreNum = get_nprocs();
     bufferSize = coreNum + 1;
     return;
+    bufferSize = coreNum + 1;
+    return;
 }
-
 
 
 ring_buffer_t ring_buffer = {
