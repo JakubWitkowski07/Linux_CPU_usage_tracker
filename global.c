@@ -1,15 +1,28 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdint.h>
-#include <sys/sysinfo.h>
-
 #include "global.h"
+#include "global.h"
+#include <unistd.h>
 
-int coreNum = 0;
 
+int coreNum;
 
-int get_core_num()
+void get_core_num();
+int coreNum;
+
+void get_core_num()
 {
+    int bufferSize;
     coreNum = get_nprocs();
-    return coreNum;
+    bufferSize = coreNum + 1;
+    return;
 }
+
+
+ring_buffer_t ring_buffer = {
+    .buffer = {0},
+    .head = 0,
+    .tail = 0,
+    .count = 0,
+    .mutex = PTHREAD_MUTEX_INITIALIZER,
+    .empty = PTHREAD_COND_INITIALIZER,
+    .full = PTHREAD_COND_INITIALIZER,
+};

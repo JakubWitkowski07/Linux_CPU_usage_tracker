@@ -1,12 +1,6 @@
-#ifndef READER_H
-#define READER_H
-
 #include <stdio.h>
-#include <unistd.h>
 #include <stdint.h>
+#include <pthread.h>
 
-#include "global.h"
-
-void get_proc_stats(struct cpuStats *stats);
-
-#endif /*READER_H*/
+void get_proc_stats(struct ring_buffer *curStats);
+void *get_proc_stat_thread();

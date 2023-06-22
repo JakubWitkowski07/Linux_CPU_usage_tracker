@@ -1,32 +1,77 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdint.h>
-
 #include "global.h"
 #include "reader.h"
 
-void get_proc_stats(struct cpuStats *stats)
+void get_proc_stats(struct ring_buffer *curStats)
 {
-    char cpu[7];
-    FILE *fp = fopen("/proc/stat", "r");
-
-    /* Save stats for CPU */
-    for(int cpuNum = 0; cpuNum <= coreNum; cpuNum++)
+    char cpuStatsBuffer[100];
+    int lineskip = ring_buffer.head;
+    FILE *fp;
+    
+    fp = fopen("/proc/stat", "r");
+    for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
     {
-        fscanf(fp, "%s %u %u %u %u %u %u %u %u %u %u", 
-            &(stats[cpuNum].name[0]),
-            &(stats[cpuNum].user), 
-            &(stats[cpuNum].nice), 
-            &(stats[cpuNum].system), 
-            &(stats[cpuNum].idle), 
-            &(stats[cpuNum].iowait), 
-            &(stats[cpuNum].irq),
-            &(stats[cpuNum].softirq), 
-            &(stats[cpuNum].steal), 
-            &(stats[cpuNum].guest), 
-            &(stats[cpuNum].guest_nice));
+        if(switchPos > 0)
+        {
+        for(int coreNum = lineskip; coreNum > 0; coreNum--)
+        {
+            fgets(cpuStatsBuffer, sizeof(cpuStatsBuffer), fp);
+        }
+        }
+
+        fscanf(fp, "%s  %u %u %u %u %u %u %u %u %u %u", 
+                &(curStats->buffer[switchPos].stats.name[0]),
+                &(curStats->buffer[switchPos].stats.user), 
+                &(curStats->buffer[switchPos].stats.nice), 
+                &(curStats->buffer[switchPos].stats.system), 
+                &(curStats->buffer[switchPos].stats.idle), 
+                &(curStats->buffer[switchPos].stats.iowait), 
+                &(curStats->buffer[switchPos].stats.irq),
+                &(curStats->buffer[switchPos].stats.softirq), 
+                &(curStats->buffer[switchPos].stats.steal), 
+                &(curStats->buffer[switchPos].stats.guest), 
+                &(curStats->buffer[switchPos].stats.guest_nice));
     }
-        
+    fclose(fp);
+
+    usleep(100000);
+
+    fp = fopen("/proc/stat", "r");
+    for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
+    {
+        if(switchPos > 0)
+        {
+        for(int coreNum = lineskip; coreNum > 0; coreNum--)
+        {
+            fgets(cpuStatsBuffer, sizeof(cpuStatsBuffer), fp);
+        }
+        }
+        fscanf(fp, "%s %u %u %u %u %u %u %u %u %u %u", 
+                &(curStats->buffer[switchPos].stats.cur_name[0]),
+                &(curStats->buffer[switchPos].stats.cur_user), 
+                &(curStats->buffer[switchPos].stats.cur_nice), 
+                &(curStats->buffer[switchPos].stats.cur_system), 
+                &(curStats->buffer[switchPos].stats.cur_idle), 
+                &(curStats->buffer[switchPos].stats.cur_iowait), 
+                &(curStats->buffer[switchPos].stats.cur_irq),
+                &(curStats->buffer[switchPos].stats.cur_softirq), 
+                &(curStats->buffer[switchPos].stats.cur_steal), 
+                &(curStats->buffer[switchPos].stats.cur_guest), 
+                &(curStats->buffer[switchPos].stats.cur_guest_nice));
+
+        ring_buffer.head = (ring_buffer.head + 1) % BUFFER_SIZE;
+    }
     fclose(fp);
     return;
+}
+
+void *get_proc_stat_thread() {
+    while(1) {
+        pthread_mutex_lock(&ring_buffer.mutex);
+        while (ring_buffer.count == 1 || ring_buffer.count == 2) 
+            pthread_cond_wait(&ring_buffer.empty, &ring_buffer.mutex);
+        get_proc_stats(&ring_buffer.buffer);
+        ring_buffer.count++;
+        pthread_cond_signal(&ring_buffer.full);
+        pthread_mutex_unlock(&ring_buffer.mutex);
+    }
 }

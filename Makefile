@@ -1,14 +1,34 @@
-CC=clang
-CFLAGS = -Weverything
+CC = clang
+CFLAGS = -Wall -Wextra -pthread
 
-CC2=gcc
-C2FLAGS = -Wall -Wextra
+CC2 = clang
+CFLAGS2 = -Weverything -pthread
 
-clang:
-	$(CC) $(CFLAGS) main.c global.c reader.c analyzer.c printer.c -o clangcompilation
+TARGET = CUT
 
-gcc:
-	$(CC2) $(C2FLAGS) main.c global.c reader.c analyzer.c printer.c -o gcccompilation
+OBJS = main.o global.o reader.o analyzer.o printer.o
+HEADERS = reader.h analyzer.h printer.h global.h
+
+gcc: $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+
+clang: $(OBJS)
+	$(CC2) $(CFLAGS2) -o $(TARGET) $(OBJS)
+
+main.o: main.c $(HEADERS)
+	$(CC) $(CFLAGS) -c main.c
+
+global.o: global.c $(HEADERS)
+	$(CC) $(CFLAGS) -c global.c
+
+reader.o: reader.c $(HEADERS)
+	$(CC) $(CFLAGS) -c reader.c
+
+analyzer.o: analyzer.c $(HEADERS)
+	$(CC) $(CFLAGS) -c analyzer.c
+
+printer.o: printer.c $(HEADERS)
+	$(CC) $(CFLAGS) -c printer.c
 
 clean:
-	rm -rf *.o gcccompilation clangcompilation
+	rm -f $(OBJS) $(TARGET)
