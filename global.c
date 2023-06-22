@@ -5,16 +5,13 @@
 
 int coreNum;
 
-void get_core_num()
+void get_core_num();
 int coreNum;
 
 void get_core_num()
 {
     int bufferSize;
-    int bufferSize;
     coreNum = get_nprocs();
-    bufferSize = coreNum + 1;
-    return;
     bufferSize = coreNum + 1;
     return;
 }
