@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "unistd.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "analyzer.h": "c",
+        "pthread.h": "c",
+        "semaphore.h": "c",
+        "global.h": "c"
     }
 }

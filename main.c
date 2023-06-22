@@ -1,19 +1,21 @@
-#include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <signal.h>
 
 #include "global.h"
 #include "reader.h"
 #include "analyzer.h"
 #include "printer.h"
 
+
+void term(int signum);
+
+
 volatile sig_atomic_t done = 0;
 
-void term(int signum)
-{
-    done = 1;
-}
 
 int main(void)
 {
@@ -23,23 +25,20 @@ int main(void)
     sigaction(SIGTERM, &action, NULL);
     get_core_num();
 
-    struct cpuStats statsPrev[coreNum + 1];
-    struct cpuStats statsCur[coreNum + 1];
-    double cpuUsage[coreNum + 1];
+    pthread_t reader, analyzer, printer;
 
-    while(!done)
-    {
-        get_proc_stats(&statsPrev);
+    pthread_create(&reader, NULL, get_proc_stat_thread, NULL);
+    pthread_create(&analyzer, NULL, calculate_usage_thread, NULL);
+    pthread_create(&printer, NULL, printer_thread, NULL);
 
-        sleep(1);
+    pthread_join(reader, NULL);
+    pthread_join(analyzer, NULL);
+    pthread_join(printer, NULL);
 
-        get_proc_stats(&statsCur);
-
-        calculate_usage(&statsPrev, &statsCur, cpuUsage);
-
-        print_usage(cpuUsage);
-
-    }
-    
     return 0;
+}
+
+void term(int signum)
+{
+    done = 1;
 }

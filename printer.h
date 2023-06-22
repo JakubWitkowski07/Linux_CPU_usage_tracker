@@ -1,12 +1,8 @@
-#ifndef PRINTER_H
-#define PRINTER_H
-
 #include <stdio.h>
-#include <unistd.h>
 #include <stdint.h>
+#include <pthread.h>
 
 #include "global.h"
 
-void print_usage(double usage[]);
-
-#endif /*PRINTER_H*/
+void print_usage(struct ring_buffer *results);
+void *printer_thread();
