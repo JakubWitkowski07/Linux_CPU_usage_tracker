@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <pthread.h>
+#include <stdbool.h>
+
 
 extern int coreNum;
 void get_core_num() __attribute__((constructor));
@@ -57,5 +59,8 @@ typedef struct ring_buffer {
 } ring_buffer_t;
 
 extern ring_buffer_t ring_buffer;
+
+extern pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
+
 
 #endif

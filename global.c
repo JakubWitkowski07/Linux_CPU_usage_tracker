@@ -1,6 +1,6 @@
 #include "global.h"
-#include "global.h"
 #include <unistd.h>
+#include <pthread.h>
 
 
 int coreNum;
@@ -26,3 +26,5 @@ ring_buffer_t ring_buffer = {
     .empty = PTHREAD_COND_INITIALIZER,
     .full = PTHREAD_COND_INITIALIZER,
 };
+
+pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
