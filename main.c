@@ -26,8 +26,6 @@ int main(void)
     sigaction(SIGTERM, &action, NULL);
     get_core_num();
 
-    pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
-
     pthread_create(&reader_id, NULL, get_proc_stat_thread, NULL);
     pthread_create(&analyzer_id, NULL, calculate_usage_thread, NULL);
     pthread_create(&printer_id, NULL, printer_thread, NULL);

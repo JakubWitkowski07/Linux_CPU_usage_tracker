@@ -60,5 +60,7 @@ typedef struct ring_buffer {
 
 extern ring_buffer_t ring_buffer;
 
+extern pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
+
 
 #endif

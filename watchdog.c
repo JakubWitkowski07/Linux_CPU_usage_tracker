@@ -1,3 +1,4 @@
+#include "global.h"
 #include "watchdog.h"
 
 time_t current_time = 0;
