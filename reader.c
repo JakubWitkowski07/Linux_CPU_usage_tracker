@@ -1,5 +1,8 @@
 #include "global.h"
 #include "reader.h"
+#include "watchdog.h"
+
+
 
 void get_proc_stats(struct ring_buffer *curStats)
 {
@@ -61,11 +64,11 @@ void get_proc_stats(struct ring_buffer *curStats)
         ring_buffer.head = (ring_buffer.head + 1) % BUFFER_SIZE;
     }
     fclose(fp);
-    return;
 }
 
 void *get_proc_stat_thread() {
     while(1) {
+        last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1 || ring_buffer.count == 2) 
             pthread_cond_wait(&ring_buffer.empty, &ring_buffer.mutex);

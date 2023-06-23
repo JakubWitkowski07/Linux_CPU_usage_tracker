@@ -1,5 +1,7 @@
 #include "global.h"
 #include "analyzer.h"
+#include "watchdog.h"
+
 
 void calculate_usage(struct ring_buffer *calcCurStats)
 {
@@ -38,6 +40,7 @@ void calculate_usage(struct ring_buffer *calcCurStats)
 
 void *calculate_usage_thread() {
     while(1) {
+        last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 0 || ring_buffer.count == 2) 
             pthread_cond_wait(&ring_buffer.full, &ring_buffer.mutex);
@@ -45,6 +48,6 @@ void *calculate_usage_thread() {
         ring_buffer.tail = (ring_buffer.tail + 1) % BUFFER_SIZE;
         ring_buffer.count++;
         pthread_cond_signal(&ring_buffer.empty);
-        pthread_mutex_unlock(&ring_buffer.mutex);
+        pthread_mutex_unlock(&ring_buffer.mutex); 
     }
 }

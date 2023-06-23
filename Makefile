@@ -1,19 +1,19 @@
+ifeq ($(CCNAME), clang)
 CC = clang
-CFLAGS = -Wall -Wextra -pthread
-
-CC2 = clang
-CFLAGS2 = -Weverything -pthread
-
+CFLAGS = -Weverything -pthread -lrt
+else
+CC = gcc
+CFLAGS = -Wall -Wextra -pthread -lrt
+endif
 TARGET = CUT
+SOURCES = main.c global.c reader.c analyzer.c printer.c watchdog.c
+OBJS = main.o global.o reader.o analyzer.o printer.o watchdog.o
+HEADERS = reader.h analyzer.h printer.h global.h watchdog.h
 
-OBJS = main.o global.o reader.o analyzer.o printer.o
-HEADERS = reader.h analyzer.h printer.h global.h
+all: $(TARGET)
 
-gcc: $(OBJS)
+$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
-
-clang: $(OBJS)
-	$(CC2) $(CFLAGS2) -o $(TARGET) $(OBJS)
 
 main.o: main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c main.c
@@ -29,6 +29,9 @@ analyzer.o: analyzer.c $(HEADERS)
 
 printer.o: printer.c $(HEADERS)
 	$(CC) $(CFLAGS) -c printer.c
+
+watchdog.o: watchdog.c $(HEADERS)
+	$(CC) $(CFLAGS) -c watchdog.c
 
 clean:
 	rm -f $(OBJS) $(TARGET)

@@ -1,6 +1,6 @@
 #include "global.h"
 #include "printer.h"
-
+#include "watchdog.h"
 
 void print_usage(struct ring_buffer *results)
 {
@@ -21,6 +21,7 @@ void print_usage(struct ring_buffer *results)
 
 void *printer_thread() {
     while(1) {
+        last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1) 
             pthread_cond_wait(&ring_buffer.full, &ring_buffer.mutex);
@@ -29,5 +30,6 @@ void *printer_thread() {
         pthread_cond_signal(&ring_buffer.empty);
         pthread_mutex_unlock(&ring_buffer.mutex);
         sleep(1);
+        last_activity_time = time(NULL);
     }
 }

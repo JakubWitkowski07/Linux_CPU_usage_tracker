@@ -5,6 +5,7 @@
         "analyzer.h": "c",
         "pthread.h": "c",
         "semaphore.h": "c",
-        "global.h": "c"
+        "global.h": "c",
+        "stdio.h": "c"
     }
 }

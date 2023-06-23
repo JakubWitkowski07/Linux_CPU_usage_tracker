@@ -9,6 +9,7 @@
 #include "reader.h"
 #include "analyzer.h"
 #include "printer.h"
+#include "watchdog.h"
 
 
 void term(int signum);
@@ -25,16 +26,18 @@ int main(void)
     sigaction(SIGTERM, &action, NULL);
     get_core_num();
 
-    pthread_t reader, analyzer, printer;
+    pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
 
-    pthread_create(&reader, NULL, get_proc_stat_thread, NULL);
-    pthread_create(&analyzer, NULL, calculate_usage_thread, NULL);
-    pthread_create(&printer, NULL, printer_thread, NULL);
-
-    pthread_join(reader, NULL);
-    pthread_join(analyzer, NULL);
-    pthread_join(printer, NULL);
-
+    pthread_create(&reader_id, NULL, get_proc_stat_thread, NULL);
+    pthread_create(&analyzer_id, NULL, calculate_usage_thread, NULL);
+    pthread_create(&printer_id, NULL, printer_thread, NULL);
+    pthread_create(&watchdog_id, NULL, watchdog_thread, NULL);
+    
+    pthread_join(reader_id, NULL);
+    pthread_join(analyzer_id, NULL);
+    pthread_join(printer_id, NULL);
+    pthread_join(watchdog_id, NULL);
+    
     return 0;
 }
 

@@ -1,5 +1,4 @@
 #include "global.h"
-#include "global.h"
 #include <unistd.h>
 
 
