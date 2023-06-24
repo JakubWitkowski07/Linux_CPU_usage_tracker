@@ -18,7 +18,7 @@ void get_core_num()
 
 
 ring_buffer_t ring_buffer = {
-    .buffer = {0},
+    .buffer = {{{{0}}}},
     .head = 0,
     .tail = 0,
     .count = 0,

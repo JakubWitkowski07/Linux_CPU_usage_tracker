@@ -10,6 +10,7 @@
 #include "analyzer.h"
 #include "printer.h"
 #include "watchdog.h"
+#include "logger.h"
 
 
 void term(int signum);
@@ -20,21 +21,41 @@ volatile sig_atomic_t done = 0;
 
 int main(void)
 {
+    
+    log_message(INFO, "App started");
     struct sigaction action;
     memset(&action, 0, sizeof(struct sigaction));
     action.sa_handler = term;
     sigaction(SIGTERM, &action, NULL);
     get_core_num();
+    
 
-    pthread_create(&reader_id, NULL, get_proc_stat_thread, NULL);
-    pthread_create(&analyzer_id, NULL, calculate_usage_thread, NULL);
-    pthread_create(&printer_id, NULL, printer_thread, NULL);
-    pthread_create(&watchdog_id, NULL, watchdog_thread, NULL);
+    if(pthread_create(&reader_id, NULL, get_proc_stat_thread, NULL) != 0)
+    {
+        log_message(ERROR, "Failed to create reader thread");
+    }
+
+    if(pthread_create(&analyzer_id, NULL, calculate_usage_thread, NULL) != 0)
+    {
+        log_message(ERROR, "Failed to create analyzer thread");
+    }
+    
+    if(pthread_create(&printer_id, NULL, printer_thread, NULL) != 0)
+    {
+        log_message(ERROR, "Failed to create printer thread");
+    }
+    
+    if(pthread_create(&watchdog_id, NULL, watchdog_thread, NULL) != 0)
+    {
+        log_message(ERROR, "Failed to create reader thread");
+    }
     
     pthread_join(reader_id, NULL);
     pthread_join(analyzer_id, NULL);
     pthread_join(printer_id, NULL);
     pthread_join(watchdog_id, NULL);
+    
+    log_message(INFO, "App closed");
     
     return 0;
 }

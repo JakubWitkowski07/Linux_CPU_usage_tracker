@@ -6,9 +6,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -pthread -lrt
 endif
 TARGET = CUT
-SOURCES = main.c global.c reader.c analyzer.c printer.c watchdog.c
-OBJS = main.o global.o reader.o analyzer.o printer.o watchdog.o
-HEADERS = reader.h analyzer.h printer.h global.h watchdog.h
+SOURCES = main.c global.c reader.c analyzer.c printer.c watchdog.c .logger.c
+OBJS = main.o global.o reader.o analyzer.o printer.o watchdog.o logger.o
+HEADERS = reader.h analyzer.h printer.h global.h watchdog.h logger.h
 
 all: $(TARGET)
 
@@ -33,5 +33,8 @@ printer.o: printer.c $(HEADERS)
 watchdog.o: watchdog.c $(HEADERS)
 	$(CC) $(CFLAGS) -c watchdog.c
 
+logger.o: logger.c $(HEADERS)
+	$(CC) $(CFLAGS) -c logger.c
+
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) log.txt

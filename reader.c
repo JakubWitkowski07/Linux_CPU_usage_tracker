@@ -1,6 +1,7 @@
 #include "global.h"
 #include "reader.h"
 #include "watchdog.h"
+#include "logger.h"
 
 
 
@@ -11,6 +12,10 @@ void get_proc_stats(struct ring_buffer *curStats)
     FILE *fp;
     
     fp = fopen("/proc/stat", "r");
+    if(fp == NULL)
+    {
+        log_message(ERROR, "Failed to open /proc/stat");
+    }
     for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
     {
         if(switchPos > 0)

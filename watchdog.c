@@ -1,5 +1,6 @@
 #include "global.h"
 #include "watchdog.h"
+#include "logger.h"
 
 time_t current_time = 0;
 time_t last_activity_time = 0;
@@ -12,6 +13,7 @@ void *watchdog_thread()
     while (1) {
         current_time = time(NULL);
         if (current_time - last_activity_time > TIMEOUT) {
+            log_message(ERROR, "Program terminated: threads are not responding");
             printf("Program terminated: threads are not responding.\n");
             pthread_join(reader_id, NULL);
             pthread_join(analyzer_id, NULL);
