@@ -6,7 +6,6 @@
 
 FILE* log_file;
 
-
 void open_log_file()
 {
     log_file = fopen("log.txt", "a");
@@ -24,7 +23,7 @@ void close_log_file()
 
 void log_message(LogLevel level, const char* message)
 {
-    open_log_file();
+    
     time_t currentTime = time(NULL);
     char timestamp[20];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
@@ -34,5 +33,4 @@ void log_message(LogLevel level, const char* message)
 
     fprintf(log_file, "%s", log_line);
 
-    close_log_file();
 }

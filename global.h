@@ -6,10 +6,16 @@
 #include <stdint.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <signal.h>
 
+#include "logger.h"
 
 extern int coreNum;
+extern int shouldExit;
 void get_core_num() __attribute__((constructor));
+void closing_handler(int typeOfClose);
+void sigint_handler(int signal);
+void set_signal_action(void);
 
 #define CORENUM sysconf(_SC_NPROCESSORS_ONLN)
 #define BUFFER_SIZE 5

@@ -20,7 +20,7 @@ void print_usage(struct ring_buffer *results)
 
 
 void *printer_thread() {
-    while(1) {
+    while(!shouldExit) {
         last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1) 
@@ -32,4 +32,5 @@ void *printer_thread() {
         sleep(1);
         last_activity_time = time(NULL);
     }
+    pthread_exit(NULL);
 }

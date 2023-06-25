@@ -39,7 +39,7 @@ void calculate_usage(struct ring_buffer *calcCurStats)
 }
 
 void *calculate_usage_thread() {
-    while(1) {
+    while(!shouldExit) {
         last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 0 || ring_buffer.count == 2) 
@@ -50,4 +50,5 @@ void *calculate_usage_thread() {
         pthread_cond_signal(&ring_buffer.empty);
         pthread_mutex_unlock(&ring_buffer.mutex); 
     }
+    pthread_exit(NULL);
 }

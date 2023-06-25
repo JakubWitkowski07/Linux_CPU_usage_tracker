@@ -10,18 +10,14 @@ void *watchdog_thread()
 {   
     current_time = time(NULL);
     last_activity_time = time(NULL);
-    while (1) {
+    while (!shouldExit) {
         current_time = time(NULL);
         if (current_time - last_activity_time > TIMEOUT) {
             log_message(ERROR, "Program terminated: threads are not responding");
             printf("Program terminated: threads are not responding.\n");
-            pthread_join(reader_id, NULL);
-            pthread_join(analyzer_id, NULL);
-            pthread_join(printer_id, NULL);
-            pthread_join(watchdog_id, NULL);
-            exit(1); // Terminate the program
+            closing_handler(1);
         }
         sleep(2);
     }
-    return NULL;
+    pthread_exit(NULL);
 }

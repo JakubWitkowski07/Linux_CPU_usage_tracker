@@ -72,7 +72,7 @@ void get_proc_stats(struct ring_buffer *curStats)
 }
 
 void *get_proc_stat_thread() {
-    while(1) {
+    while(!shouldExit) {
         last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1 || ring_buffer.count == 2) 
@@ -82,4 +82,5 @@ void *get_proc_stat_thread() {
         pthread_cond_signal(&ring_buffer.full);
         pthread_mutex_unlock(&ring_buffer.mutex);
     }
+    pthread_exit(NULL);
 }
