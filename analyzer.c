@@ -4,28 +4,28 @@
 
 
 void calculate_usage(struct ring_buffer *calcCurStats)
-{
-    for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
+{   
+    while(ring_buffer.tail <=coreNum)
     {
-        unsigned long long int idle_prev = (calcCurStats->buffer[switchPos].stats.idle) + (calcCurStats->buffer[switchPos].stats.iowait);
-        unsigned long long int idle_cur = (calcCurStats->buffer[switchPos].stats.cur_idle) + (calcCurStats->buffer[switchPos].stats.cur_iowait);
+        unsigned long long int idle_prev = (calcCurStats->buffer[ring_buffer.tail].stats.idle) + (calcCurStats->buffer[ring_buffer.tail].stats.iowait);
+        unsigned long long int idle_cur = (calcCurStats->buffer[ring_buffer.tail].stats.cur_idle) + (calcCurStats->buffer[ring_buffer.tail].stats.cur_iowait);
 
-        unsigned long long int nidle_prev = (calcCurStats->buffer[switchPos].stats.user) 
-                        + (calcCurStats->buffer[switchPos].stats.nice) 
-                        + (calcCurStats->buffer[switchPos].stats.system) 
-                        + (calcCurStats->buffer[switchPos].stats.irq) 
-                        + (calcCurStats->buffer[switchPos].stats.softirq) 
-                        + (calcCurStats->buffer[switchPos].stats.steal) 
-                        + (calcCurStats->buffer[switchPos].stats.guest) 
-                        + (calcCurStats->buffer[switchPos].stats.guest_nice);
-        unsigned long long int nidle_cur = (calcCurStats->buffer[switchPos].stats.cur_user) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_nice) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_system) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_irq) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_softirq) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_steal) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_guest) 
-                        + (calcCurStats->buffer[switchPos].stats.cur_guest_nice);
+        unsigned long long int nidle_prev = (calcCurStats->buffer[ring_buffer.tail].stats.user) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.nice) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.system) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.irq) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.softirq) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.steal) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.guest) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.guest_nice);
+        unsigned long long int nidle_cur = (calcCurStats->buffer[ring_buffer.tail].stats.cur_user) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_nice) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_system) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_irq) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_softirq) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_steal) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_guest) 
+                        + (calcCurStats->buffer[ring_buffer.tail].stats.cur_guest_nice);
 
         unsigned long long int total_prev = idle_prev + nidle_prev;
         unsigned long long int total_cur = idle_cur + nidle_cur;
@@ -34,7 +34,8 @@ void calculate_usage(struct ring_buffer *calcCurStats)
         double idled = (double) idle_cur - (double) idle_prev;
 
         double cpu_perc = (1000 * (totald - idled) / totald + 1) / 10;
-        calcCurStats->buffer[switchPos].usage = cpu_perc;
+        calcCurStats->buffer[ring_buffer.tail].usage = cpu_perc;
+        ring_buffer.tail++;
     }
 }
 
@@ -46,7 +47,6 @@ void *calculate_usage_thread(void* arg) {
         while (ring_buffer.count == 0 || ring_buffer.count == 2) 
             pthread_cond_wait(&ring_buffer.full, &ring_buffer.mutex);
         calculate_usage(&ring_buffer);
-        ring_buffer.tail = (ring_buffer.tail + 1) % BUFFER_SIZE;
         ring_buffer.count++;
         pthread_cond_signal(&ring_buffer.empty);
         pthread_mutex_unlock(&ring_buffer.mutex); 

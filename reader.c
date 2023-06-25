@@ -16,9 +16,9 @@ void get_proc_stats(struct ring_buffer *curStats)
     {
         log_message(ERROR, "Failed to open /proc/stat");
     }
-    for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
+    while(ring_buffer.head <= coreNum)
     {
-        if(switchPos > 0)
+        if(ring_buffer.head > 0)
         {
         for(int core = lineskip; core > 0; core--)
         {
@@ -27,46 +27,50 @@ void get_proc_stats(struct ring_buffer *curStats)
         }
 
         fscanf(fp, "%s  %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu", 
-                &(curStats->buffer[switchPos].stats.name[0]),
-                &(curStats->buffer[switchPos].stats.user), 
-                &(curStats->buffer[switchPos].stats.nice), 
-                &(curStats->buffer[switchPos].stats.system), 
-                &(curStats->buffer[switchPos].stats.idle), 
-                &(curStats->buffer[switchPos].stats.iowait), 
-                &(curStats->buffer[switchPos].stats.irq),
-                &(curStats->buffer[switchPos].stats.softirq), 
-                &(curStats->buffer[switchPos].stats.steal), 
-                &(curStats->buffer[switchPos].stats.guest), 
-                &(curStats->buffer[switchPos].stats.guest_nice));
+                &(curStats->buffer[ring_buffer.head].stats.name[0]),
+                &(curStats->buffer[ring_buffer.head].stats.user), 
+                &(curStats->buffer[ring_buffer.head].stats.nice), 
+                &(curStats->buffer[ring_buffer.head].stats.system), 
+                &(curStats->buffer[ring_buffer.head].stats.idle), 
+                &(curStats->buffer[ring_buffer.head].stats.iowait), 
+                &(curStats->buffer[ring_buffer.head].stats.irq),
+                &(curStats->buffer[ring_buffer.head].stats.softirq), 
+                &(curStats->buffer[ring_buffer.head].stats.steal), 
+                &(curStats->buffer[ring_buffer.head].stats.guest), 
+                &(curStats->buffer[ring_buffer.head].stats.guest_nice));
+        
+        ring_buffer.head++;
     }
     fclose(fp);
+    ring_buffer.head = 0;
 
     sleep_ms(500);
 
     fp = fopen("/proc/stat", "r");
-    for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
+    while(ring_buffer.head <= coreNum)
     {
-        if(switchPos > 0)
+        if(ring_buffer.head > 0)
         {
         for(int core = lineskip; core > 0; core--)
         {
             fgets(cpuStatsBuffer, sizeof(cpuStatsBuffer), fp);
         }
         }
-        fscanf(fp, "%s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu", 
-                &(curStats->buffer[switchPos].stats.cur_name[0]),
-                &(curStats->buffer[switchPos].stats.cur_user), 
-                &(curStats->buffer[switchPos].stats.cur_nice), 
-                &(curStats->buffer[switchPos].stats.cur_system), 
-                &(curStats->buffer[switchPos].stats.cur_idle), 
-                &(curStats->buffer[switchPos].stats.cur_iowait), 
-                &(curStats->buffer[switchPos].stats.cur_irq),
-                &(curStats->buffer[switchPos].stats.cur_softirq), 
-                &(curStats->buffer[switchPos].stats.cur_steal), 
-                &(curStats->buffer[switchPos].stats.cur_guest), 
-                &(curStats->buffer[switchPos].stats.cur_guest_nice));
 
-        ring_buffer.head = (ring_buffer.head + 1) % BUFFER_SIZE;
+        fscanf(fp, "%s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu", 
+                &(curStats->buffer[ring_buffer.head].stats.cur_name[0]),
+                &(curStats->buffer[ring_buffer.head].stats.cur_user), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_nice), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_system), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_idle), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_iowait), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_irq),
+                &(curStats->buffer[ring_buffer.head].stats.cur_softirq), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_steal), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_guest), 
+                &(curStats->buffer[ring_buffer.head].stats.cur_guest_nice));
+
+        ring_buffer.head++;
     }
     fclose(fp);
 }

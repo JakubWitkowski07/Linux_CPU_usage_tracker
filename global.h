@@ -23,7 +23,7 @@ void set_signal_action(void);
 void sleep_ms(int milliseconds);
 
 #define CORENUM sysconf(_SC_NPROCESSORS_ONLN)
-#define BUFFER_SIZE 5
+#define BUFFER_SIZE 20
 
 typedef struct cpuStats
 {
