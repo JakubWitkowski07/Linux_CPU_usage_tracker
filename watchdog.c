@@ -6,8 +6,9 @@ time_t current_time = 0;
 time_t last_activity_time = 0;
 
 
-void *watchdog_thread()
+void *watchdog_thread(void* arg)
 {   
+    (void)arg;
     current_time = time(NULL);
     last_activity_time = time(NULL);
     while (!shouldExit) {

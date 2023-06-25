@@ -10,6 +10,7 @@ int shouldExit = 0;
 
 ring_buffer_t ring_buffer = {
     .buffer = {{{{0}}}},
+    .buffer[0].usage = 0.0,
     .head = 0,
     .tail = 0,
     .count = 0,
@@ -54,10 +55,15 @@ void set_signal_action(void)
     sigaction(SIGTERM, &action, NULL);
 }
 
-void get_core_num()
+void get_core_num(void)
 {
-    int bufferSize;
     coreNum = get_nprocs();
-    bufferSize = coreNum + 1;
     return;
+}
+
+void sleep_ms(int milliseconds) {
+    struct timespec ts;
+    ts.tv_sec = milliseconds / 1000;
+    ts.tv_nsec = (milliseconds % 1000) * 1000000;
+    nanosleep(&ts, NULL);
 }

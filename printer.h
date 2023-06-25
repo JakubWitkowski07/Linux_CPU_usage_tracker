@@ -5,4 +5,4 @@
 #include "global.h"
 
 void print_usage(struct ring_buffer *results);
-void *printer_thread();
+void *printer_thread(void* arg);

@@ -18,14 +18,14 @@ void print_usage(struct ring_buffer *results)
         printf("\n");
 }
 
-
-void *printer_thread() {
+void *printer_thread(void* arg) {
+    (void)arg;
     while(!shouldExit) {
         last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1) 
             pthread_cond_wait(&ring_buffer.full, &ring_buffer.mutex);
-        print_usage(&ring_buffer.buffer);
+        print_usage(&ring_buffer);
         ring_buffer.count = 0;
         pthread_cond_signal(&ring_buffer.empty);
         pthread_mutex_unlock(&ring_buffer.mutex);

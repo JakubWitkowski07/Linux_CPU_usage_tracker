@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -26,9 +25,10 @@ void log_message(LogLevel level, const char* message)
     
     time_t currentTime = time(NULL);
     char timestamp[20];
+    char log_line[256];
+
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
 
-    char log_line[256];
     snprintf(log_line, sizeof(log_line), "[%s] [%s] %s\n", timestamp, level == DEBUG ? "DEBUG" : level == INFO ? "INFO" : level == WARNING ? "WARNING" : "ERROR", message);
 
     fprintf(log_file, "%s", log_line);

@@ -2,20 +2,25 @@
 #define GLOBAL_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <unistd.h>
 #include <stdint.h>
 #include <pthread.h>
 #include <stdbool.h>
 #include <signal.h>
+#include <sys/sysinfo.h>
+#include <time.h>
 
 #include "logger.h"
 
 extern int coreNum;
 extern int shouldExit;
-void get_core_num() __attribute__((constructor));
-void closing_handler(int typeOfClose);
+void get_core_num(void) __attribute__((constructor));
+void closing_handler(int typeOfClose) __attribute__((noreturn));
 void sigint_handler(int signal);
 void set_signal_action(void);
+void sleep_ms(int milliseconds);
 
 #define CORENUM sysconf(_SC_NPROCESSORS_ONLN)
 #define BUFFER_SIZE 5
@@ -23,34 +28,34 @@ void set_signal_action(void);
 typedef struct cpuStats
 {
     char name[7];
-    uint32_t user;
-    uint32_t nice;
-    uint32_t system;
-    uint32_t idle;
-    uint32_t iowait;
-    uint32_t irq;
-    uint32_t softirq;
-    uint32_t steal;
-    uint32_t guest;
-    uint32_t guest_nice; 
+    unsigned long long int  user;
+    unsigned long long int  nice;
+    unsigned long long int  system;
+    unsigned long long int  idle;
+    unsigned long long int  iowait;
+    unsigned long long int  irq;
+    unsigned long long int  softirq;
+    unsigned long long int  steal;
+    unsigned long long int  guest;
+    unsigned long long int  guest_nice; 
 
     char cur_name[7];
-    uint32_t cur_user;
-    uint32_t cur_nice;
-    uint32_t cur_system;
-    uint32_t cur_idle;
-    uint32_t cur_iowait;
-    uint32_t cur_irq;
-    uint32_t cur_softirq;
-    uint32_t cur_steal;
-    uint32_t cur_guest;
-    uint32_t cur_guest_nice;
+    unsigned long long int  cur_user;
+    unsigned long long int  cur_nice;
+    unsigned long long int  cur_system;
+    unsigned long long int  cur_idle;
+    unsigned long long int  cur_iowait;
+    unsigned long long int  cur_irq;
+    unsigned long long int  cur_softirq;
+    unsigned long long int  cur_steal;
+    unsigned long long int  cur_guest;
+    unsigned long long int  cur_guest_nice;
 
-};
+} cpuStats_t;
 
 typedef struct buffer_element
 {
-    struct cpuStats stats;
+    cpuStats_t stats;
     double usage;
 } buffer_element_t;
 
@@ -67,6 +72,5 @@ typedef struct ring_buffer {
 extern ring_buffer_t ring_buffer;
 
 extern pthread_t reader_id, analyzer_id, printer_id, watchdog_id;
-
 
 #endif

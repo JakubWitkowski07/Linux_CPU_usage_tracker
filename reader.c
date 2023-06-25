@@ -20,13 +20,13 @@ void get_proc_stats(struct ring_buffer *curStats)
     {
         if(switchPos > 0)
         {
-        for(int coreNum = lineskip; coreNum > 0; coreNum--)
+        for(int core = lineskip; core > 0; core--)
         {
             fgets(cpuStatsBuffer, sizeof(cpuStatsBuffer), fp);
         }
         }
 
-        fscanf(fp, "%s  %u %u %u %u %u %u %u %u %u %u", 
+        fscanf(fp, "%s  %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu", 
                 &(curStats->buffer[switchPos].stats.name[0]),
                 &(curStats->buffer[switchPos].stats.user), 
                 &(curStats->buffer[switchPos].stats.nice), 
@@ -41,19 +41,19 @@ void get_proc_stats(struct ring_buffer *curStats)
     }
     fclose(fp);
 
-    usleep(100000);
+    sleep_ms(500);
 
     fp = fopen("/proc/stat", "r");
     for(int switchPos = 0; switchPos < BUFFER_SIZE; switchPos++)
     {
         if(switchPos > 0)
         {
-        for(int coreNum = lineskip; coreNum > 0; coreNum--)
+        for(int core = lineskip; core > 0; core--)
         {
             fgets(cpuStatsBuffer, sizeof(cpuStatsBuffer), fp);
         }
         }
-        fscanf(fp, "%s %u %u %u %u %u %u %u %u %u %u", 
+        fscanf(fp, "%s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu", 
                 &(curStats->buffer[switchPos].stats.cur_name[0]),
                 &(curStats->buffer[switchPos].stats.cur_user), 
                 &(curStats->buffer[switchPos].stats.cur_nice), 
@@ -71,13 +71,14 @@ void get_proc_stats(struct ring_buffer *curStats)
     fclose(fp);
 }
 
-void *get_proc_stat_thread() {
+void *get_proc_stat_thread(void* arg) {
+    (void)arg;
     while(!shouldExit) {
         last_activity_time = time(NULL);
         pthread_mutex_lock(&ring_buffer.mutex);
         while (ring_buffer.count == 1 || ring_buffer.count == 2) 
             pthread_cond_wait(&ring_buffer.empty, &ring_buffer.mutex);
-        get_proc_stats(&ring_buffer.buffer);
+        get_proc_stats(&ring_buffer);
         ring_buffer.count++;
         pthread_cond_signal(&ring_buffer.full);
         pthread_mutex_unlock(&ring_buffer.mutex);

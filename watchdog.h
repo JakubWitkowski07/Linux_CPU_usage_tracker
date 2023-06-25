@@ -14,6 +14,6 @@
 extern time_t current_time;
 extern time_t last_activity_time;
 
-void *watchdog_thread();
+void *watchdog_thread(void* arg);
 
 #endif

@@ -1,9 +1,9 @@
 ifeq ($(CCNAME), clang)
 CC = clang
-CFLAGS = -Weverything -pthread -lrt
+CFLAGS = -std=c11 -Weverything -Wno-padded -Wno-disabled-macro-expansion -Wno-missing-field-initializers -pthread
 else
 CC = gcc
-CFLAGS = -Wall -Wextra -pthread -lrt
+CFLAGS = -std=c11 -Wall -Wextra -pthread
 endif
 TARGET = CUT
 SOURCES = main.c global.c reader.c analyzer.c printer.c watchdog.c .logger.c
