@@ -23,7 +23,6 @@ int main(void)
 
     get_core_num();
     
-
     if(pthread_create(&reader_id, NULL, get_proc_stat_thread, NULL) != 0)
     {
         log_message(ERROR, "Failed to create reader thread");

@@ -11,7 +11,13 @@ void get_proc_stats(struct ring_buffer *curStats)
     int lineskip = ring_buffer.head;
     FILE *fp;
     
+#ifndef UNIT_TESTS
     fp = fopen("/proc/stat", "r");
+#endif
+#ifdef UNIT_TESTS
+    fp = fopen("test_proc_stat_prev.txt", "r");
+#endif
+
     if(fp == NULL)
     {
         log_message(ERROR, "Failed to open /proc/stat");
@@ -46,7 +52,12 @@ void get_proc_stats(struct ring_buffer *curStats)
 
     sleep_ms(500);
 
+#ifndef UNIT_TESTS
     fp = fopen("/proc/stat", "r");
+#endif
+#ifdef UNIT_TESTS
+    fp = fopen("test_proc_stat_cur.txt", "r");
+#endif
     while(ring_buffer.head <= coreNum)
     {
         if(ring_buffer.head > 0)

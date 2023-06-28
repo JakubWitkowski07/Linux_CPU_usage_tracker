@@ -1,0 +1,1 @@
+Total CPU usage: 1.00% Core[1] usage: 15.65% Core[2] usage: 2.10% Core[3] usage: 98.89% Core[4] usage: 56.78% 

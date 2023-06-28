@@ -3,6 +3,7 @@
 #include "watchdog.h"
 
 
+
 void calculate_usage(struct ring_buffer *calcCurStats)
 {   
     while(ring_buffer.tail <=coreNum)
@@ -34,6 +35,9 @@ void calculate_usage(struct ring_buffer *calcCurStats)
         double idled = (double) idle_cur - (double) idle_prev;
 
         double cpu_perc = (1000 * (totald - idled) / totald + 1) / 10;
+        cpu_perc = cpu_perc * pow(10, 2);
+        cpu_perc = round(cpu_perc);
+        cpu_perc = cpu_perc / pow(10, 2);
         calcCurStats->buffer[ring_buffer.tail].usage = cpu_perc;
         ring_buffer.tail++;
     }
