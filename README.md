@@ -32,4 +32,6 @@ To compile and run unit tests:
 1) Go to appropriate directory by using console
 2) Run 'make test' command
 3) Run './unitTest' command
-Data for testing should be taken from /proc/stat runned twice and written into "test_proc_stat_prev.txt" and "test_proc_stat_cur.txt".
+Data for testing reader and anal should be taken from /proc/stat runned twice and written into "test_proc_stat_prev.txt" and "test_proc_stat_cur.txt".
+Data for tesing printer should be written manually in unitTests.c: from line 16.
+According to number of cores which are visible in Linux testing data should be fitted - elements in buffer, results for printer, etc.
