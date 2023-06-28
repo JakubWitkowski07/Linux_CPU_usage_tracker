@@ -1,6 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+//#define UNIT_TESTS /*Uncomment this line during unit tests*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>

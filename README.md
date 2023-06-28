@@ -25,3 +25,11 @@ For compilation with CLANG there are added flags:
 "-Wno-padded -Wno-disabled-macro-expansion -Wno-missing-field-initializers"
 because of warnings which appear during compilation and not exit during compilation with GCC.
 Causes of the warnings do not affect the correct operation of the application.
+
+UNIT TESTING:
+To start unit tests global.h: line 4 "//#define UNIT_TESTS /*Uncomment this line during unit tests*/" should be uncommented.
+To compile and run unit tests:
+1) Go to appropriate directory by using console
+2) Run 'make test' command
+3) Run './unitTest' command
+Data for testing should be taken from /proc/stat runned twice and written into "test_proc_stat_prev.txt" and "test_proc_stat_cur.txt".

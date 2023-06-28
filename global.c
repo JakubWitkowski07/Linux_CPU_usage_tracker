@@ -27,11 +27,13 @@ void closing_handler(int typeOfClose)
     if(typeOfClose == 0)
     {
         log_message(INFO, "App closed");
+        close_log_file();
         exit(0);
     }
     else
     {
         log_message(INFO, "App closed because of ERROR");
+        close_log_file();
         exit(1);
     }
 }

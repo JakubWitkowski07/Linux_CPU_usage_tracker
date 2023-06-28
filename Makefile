@@ -13,7 +13,7 @@ HEADERS = reader.h analyzer.h printer.h global.h watchdog.h logger.h
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) -lm
 
 main.o: main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c main.c
@@ -38,3 +38,6 @@ logger.o: logger.c $(HEADERS)
 
 clean:
 	rm -f $(OBJS) $(TARGET) log.txt
+
+test:
+	gcc -o unitTests unitTests.c global.c reader.c analyzer.c printer.c logger.c watchdog.c -lm
